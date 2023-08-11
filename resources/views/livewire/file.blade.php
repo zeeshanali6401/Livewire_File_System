@@ -8,7 +8,7 @@
                 <button type="button" class="btn btn-primary btn-sm  mr-3 d-mx-auto d-block"
                     wire:click="show_modal">Add</button>
                 <div class="input-group-sm">
-                    <input class="form-control py-2 border-right-0 border" type="search" wire:model.debouce.500ms="term"
+                    <input class="form-control py-2 border-right-0 border" type="search" wire:model.debouce.1500ms="term"
                         placeholder="Search by Name or ID" id="example-search-input">
                 </div>
             </div>
@@ -31,6 +31,7 @@
         </div>
         
     </div>
+    {{-- {{ var_export($bulkDlt) }} --}}
     {{-- Table --}}
     <div class="container">
         <table class="table table-bordered">
@@ -39,6 +40,7 @@
                     <th>ID</th>
                     <th style="width: 90px">
                         <button wire:click="delete" class="btn btn-danger btn-sm m-0" @if (!$bulkDlt) disabled @endif>Delete {{ count($bulkDlt) }}</button>
+                        <a href="#" wire:click="checked">select all</a>
                     </th>
                     <th>Name</th>
                     <th>File</th>
@@ -49,7 +51,7 @@
                 @foreach ($collection as $item)
                     <tr>
                         <td class="text-center">{{ $item->id }}</td>
-                        <td><input type="checkbox" value="{{ $item->id }}" wire:model="bulkDlt"></td>
+                        <td><input type="checkbox"  value="{{ $item->id }}" wire:model="bulkDlt"></td>
                         <td>{{ $item->name }}</td>
                         <td>
                             <div class="d-flex justify-content-center"
@@ -73,12 +75,11 @@
                                         <img width="40px" src="{{ asset('source/pptx.png') }}" alt="img">
                                     @endif
                             </div>
-                        </td>
+                        </td> 
                         <td class="text-center w-25">
-                            <button class="btn btn-warning btn-sm text-white" wire:click="downloads({{ $item->id }})">Download</button>
-                            <button class="btn btn-sm btn-info" wire:click="edit({{ $item->id }})">Edit</button>
-                            <button class="btn btn-sm btn-danger"
-                                wire:click="deleteModalShow({{ $item->id }})">Delete</button>
+                            <button class="btn btn-warning btn-sm" wire:click="downloads({{ $item->id }})"><img width="20px" src="{{ asset('source/download_svg.svg') }}"></button>
+                            <button class="btn btn-sm btn-info" wire:click="edit({{ $item->id }})"><img width="20px" src="{{ asset('source/edit_svg.svg') }}"></button>
+                            <button class="btn btn-sm btn-danger text-white" wire:click="deleteModalShow({{ $item->id }})"><img width="20px" src="{{ asset('source/delete_svg.svg') }}"></button>
                         </td>
                     </tr>
                 @endforeach

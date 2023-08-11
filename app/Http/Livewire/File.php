@@ -18,6 +18,7 @@ class File extends Component
     public $uid, $uname, $ufile, $term = null, $file_id;
     public $bulkDlt = [];
     public $selectAll = false;
+    public $checked = false;
     public $data, $pngFileCount, $pdfFileCount, $docxFileCount, $xlsxFileCount, $pptxFileCount;
     protected $paginationTheme = 'bootstrap';
 
@@ -73,16 +74,29 @@ class File extends Component
     }
     public function delete()
     {
-        $data = Files::find($this->bulkDlt);
+        
+        $data = Files::find($this->bulkDlt);        // bulkDlt is an array which have stored the ids
         foreach ($data as  $value) {
             if (!is_null($data)) {
                 $filePath = public_path('uploads/file_uploads') . '/' . $value->file;
-                if (Filo::exists($filePath)) {
-                    Filo::delete($filePath);
-                }
-                // Remove the file record from the database
-                $value->delete();
-                $value->delete();
+                Filo::delete($filePath) && $value->delete();
+            }
+        }
+        $this->dispatchBrowserEvent('showModalDlt');
+        $this->bulkDlt = [];
+        $this->resetData();
+        $this->render();
+        $this->mount();
+
+    }
+    public function allDelete()
+    {
+        
+        $data = Files::find($this->bulkDlt);        // bulkDlt is an array which have stored the ids
+        foreach ($data as  $value) {
+            if (!is_null($data)) {
+                $filePath = public_path('uploads/file_uploads') . '/' . $value->file;
+                Filo::delete($filePath) && $value->delete();
             }
         }
         $this->dispatchBrowserEvent('showModalDlt');
