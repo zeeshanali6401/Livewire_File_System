@@ -17,25 +17,51 @@ class File extends Component
     public $name, $validatedData, $file, $fileName;
     public $uid, $uname, $ufile, $term = null, $file_id;
     public $bulkDlt = [];
-    public $selectAll = false;
-    public $checked = false;
+    public $selectAll;
     public $data, $pngFileCount, $pdfFileCount, $docxFileCount, $xlsxFileCount, $pptxFileCount;
     protected $paginationTheme = 'bootstrap';
 
+    public function mount()
+    {
+        $this->data = Files::all();
+        $collectionArray = $this->data->toArray();
+
+        $this->pdfFileCount = count(array_filter($collectionArray, function ($item) {
+            $filePath = $item['file'];
+            return pathinfo($filePath, PATHINFO_EXTENSION) === 'pdf';
+        }));
+        $this->pngFileCount = count(array_filter($collectionArray, function ($item) {
+            $filePath = $item['file'];
+            return pathinfo($filePath, PATHINFO_EXTENSION) === 'png' || pathinfo($filePath, PATHINFO_EXTENSION) === 'jpg';
+        }));
+        $this->docxFileCount = count(array_filter($collectionArray, function ($item) {
+            $filePath = $item['file'];
+            return pathinfo($filePath, PATHINFO_EXTENSION) === 'docx' || pathinfo($filePath, PATHINFO_EXTENSION) === 'doc';
+        }));
+        $this->xlsxFileCount = count(array_filter($collectionArray, function ($item) {
+            $filePath = $item['file'];
+            return pathinfo($filePath, PATHINFO_EXTENSION) === 'xlsx' || pathinfo($filePath, PATHINFO_EXTENSION) === 'xls';
+        }));
+        $this->pptxFileCount = count(array_filter($collectionArray, function ($item) {
+            $filePath = $item['file'];
+            return pathinfo($filePath, PATHINFO_EXTENSION) === 'ppt' || pathinfo($filePath, PATHINFO_EXTENSION) === 'pptx';
+        }));
+    }
     public function render()
     {
         $searchTerm = '%' . $this->term . '%';
-        $collection = Files::where('name', 'LIKE', $searchTerm)->orwhere('id', 'LIKE', $searchTerm)->latest()->paginate(8);
+        $collection = Files::where('name', 'LIKE', $searchTerm)->orwhere('id', 'LIKE', $searchTerm)->latest()->paginate(7);
         return view('livewire.file', [
             'collection' => $collection,
             'pagination' => $collection->toArray(),
         ]);
         $this->mount();
     }
-    public function updated($field){
+    public function updated($field)
+    {
         $this->validateOnly($field, [
             'name' => 'required',
-            'file' => 'required',
+            'file' => 'required|file|mimes:png,jpg,xls,xlsx,doc,docx,ppt,pptx,pdf|max:1024',
         ]);
     }
     public function show_modal()
@@ -56,7 +82,7 @@ class File extends Component
     {
         $this->validate([
             'name' => 'required',
-            'file' => 'required',
+            'file' => 'required|file|mimes:png,jpg,xls,xlsx,doc,ppt,pptx,pdf|max:1024',
         ]);
 
         $file = new Files;
@@ -74,7 +100,6 @@ class File extends Component
     }
     public function delete()
     {
-        
         $data = Files::find($this->bulkDlt);        // bulkDlt is an array which have stored the ids
         foreach ($data as  $value) {
             if (!is_null($data)) {
@@ -91,7 +116,6 @@ class File extends Component
     }
     public function allDelete()
     {
-        
         $data = Files::find($this->bulkDlt);        // bulkDlt is an array which have stored the ids
         foreach ($data as  $value) {
             if (!is_null($data)) {
@@ -162,34 +186,13 @@ class File extends Component
         session()->flash('message', 'Record has been successfully Updated. 😀');
         $this->render();
     }
-    public function mount(){
-        
-        $this->data = Files::all();
-        $collectionArray = $this->data->toArray();
-
-        $this->pdfFileCount = count(array_filter($collectionArray, function ($item) {
-            $filePath = $item['file'];
-            return pathinfo($filePath, PATHINFO_EXTENSION) === 'pdf';
-        }));
-        $this->pngFileCount = count(array_filter($collectionArray, function ($item) {
-            $filePath = $item['file'];
-            return pathinfo($filePath, PATHINFO_EXTENSION) === 'png';
-        }));
-        $this->docxFileCount = count(array_filter($collectionArray, function ($item) {
-            $filePath = $item['file'];
-            return pathinfo($filePath, PATHINFO_EXTENSION) === 'docx' || pathinfo($filePath, PATHINFO_EXTENSION) === 'doc';
-        }));
-        $this->xlsxFileCount = count(array_filter($collectionArray, function ($item) {
-            $filePath = $item['file'];
-            return pathinfo($filePath, PATHINFO_EXTENSION) === 'xlsx' || pathinfo($filePath, PATHINFO_EXTENSION) === 'xls';
-        }));
-        $this->pptxFileCount = count(array_filter($collectionArray, function ($item) {
-            $filePath = $item['file'];
-            return pathinfo($filePath, PATHINFO_EXTENSION) === 'ppt' || pathinfo($filePath, PATHINFO_EXTENSION) === 'pptx';
-        }));
-    }
     public function downloads($id){
         $data = Files::find($id);
         return response()->download(public_path('uploads/file_uploads'). '/' . $data->file);
+    }
+    public function toggleSelectAll()
+    {
+        $this->selectAll = !$this->selectAll;
+        $this->bulkDlt = array_fill(0, count($this->bulkDlt), $this->selectAll);
     }
 }

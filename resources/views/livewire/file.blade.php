@@ -22,7 +22,7 @@
             <div>
                 <ul class="list-group list-group-horizontal">
                     <li class="list-group-item border-0"><img width="30px" src="{{ asset('source/pdf.png') }}" alt="img"><span class="font-weight-bold pl-2">{{ $pdfFileCount }}</span></li>
-                    <li class="list-group-item border-0"><img width="30px" src="{{ asset('source/png.png') }}" alt="img"><span class="font-weight-bold pl-2">{{ $pngFileCount }}</span></li>
+                    <li class="list-group-item border-0"><img width="30px" src="{{ asset('source/img.png') }}" alt="img"><span class="font-weight-bold pl-2">{{ $pngFileCount }}</span></li>
                     <li class="list-group-item border-0"><img width="30px" src="{{ asset('source/doc.png') }}" alt="img"><span class="font-weight-bold pl-2">{{ $docxFileCount }}</span></li>
                     <li class="list-group-item border-0"><img width="30px" src="{{ asset('source/xls.png') }}" alt="img"><span class="font-weight-bold pl-2">{{ $xlsxFileCount }}</span></li>
                     <li class="list-group-item border-0"><img width="30px" src="{{ asset('source/pptx.png') }}" alt="img"><span class="font-weight-bold pl-2">{{ $pptxFileCount }}</span></li>
@@ -31,16 +31,15 @@
         </div>
         
     </div>
-    {{-- {{ var_export($bulkDlt) }} --}}
-    {{-- Table --}}
     <div class="container">
+        {{ $selectAll }}
         <table class="table table-bordered">
             <thead class="text-center">
                 <tr>
                     <th>ID</th>
                     <th style="width: 90px">
                         <button wire:click="delete" class="btn btn-danger btn-sm m-0" @if (!$bulkDlt) disabled @endif>Delete {{ count($bulkDlt) }}</button>
-                        <a href="#" wire:click="checked">select all</a>
+                        <input type="checkbox" wire:model.toggle="selectAll">
                     </th>
                     <th>Name</th>
                     <th>File</th>
@@ -51,7 +50,7 @@
                 @foreach ($collection as $item)
                     <tr>
                         <td class="text-center">{{ $item->id }}</td>
-                        <td><input type="checkbox"  value="{{ $item->id }}" wire:model="bulkDlt"></td>
+                        <td><input type="checkbox" value="{{ $item->id }}" @if ($selectAll) checked @endif wire:model="bulkDlt"></td>
                         <td>{{ $item->name }}</td>
                         <td>
                             <div class="d-flex justify-content-center"
@@ -67,6 +66,8 @@
                                         <img width="40px" src="{{ asset('source/pdf.png') }}" alt="img">
                                     @elseif($extension === 'png')
                                         <img width="40px" src="{{ asset('source/png.png') }}" alt="img">
+                                    @elseif($extension === 'jpg')
+                                        <img width="40px" src="{{ asset('source/jpg.png') }}" alt="img">
                                     @elseif($extension === 'docx' || $extension === 'doc')
                                         <img width="40px" src="{{ asset('source/doc.png') }}" alt="img">
                                     @elseif($extension === 'xlsx' || $extension === 'xls')
@@ -93,6 +94,7 @@
             <div class="col-sm-3">
                 Showing {{ $pagination['from'] }} to {{ $pagination['to'] }} of {{ $pagination['total'] }} users
             </div>
+            
         </div>
     </div>
 
