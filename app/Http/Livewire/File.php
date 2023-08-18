@@ -46,12 +46,17 @@ class File extends Component
             $filePath = $item['file'];
             return pathinfo($filePath, PATHINFO_EXTENSION) === 'ppt' || pathinfo($filePath, PATHINFO_EXTENSION) === 'pptx';
         }));
+        $collection = Files::where('id')->orderBy('id', 'desc');
+        // $this->firstId = (!is_null($collection) && count($collection) > 0) ? $collection[0]->id : null;
+        
     }
     public function render()
     {
         $searchTerm = '%' . $this->term . '%';
-        $collection = Files::where('name', 'LIKE', $searchTerm)->orwhere('id', 'LIKE', $searchTerm)->paginate(5); // ->latest()
-        $this->firstId = $collection[0]->id;
+        $collection = Files::where('name', 'LIKE', $searchTerm)->orderBy('id', 'desc')->orwhere('id', 'LIKE', $searchTerm)->paginate(5); 
+        if(!empty($collection[0]->id)){
+            $this->firstId = $collection[0]->id;
+        }
         return view('livewire.file', [
             'collection' => $collection,
             'pagination' => $collection->toArray(),
@@ -60,7 +65,7 @@ class File extends Component
     }
     public function updatedSelectAll($value){
         if($value){
-            $this->bulkDlt = Files::where('id', '>=', $this->firstId)->limit(5)->pluck('id');
+            $this->bulkDlt = Files::where('id', '<=', $this->firstId)->orderBy('id', 'desc')->limit(5)->pluck('id');
         }else{
             $this->bulkDlt = [];
         }

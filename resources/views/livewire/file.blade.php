@@ -29,10 +29,9 @@
         </div>
         
     </div>
-   
-    @dump($firstId)
-    {{-- @dump($selectAll)
-    @dump($bulkDlt) --}}
+    {{-- @dump($firstId) --}}
+        {{-- @dump($selectAll)
+        @dump($bulkDlt) --}}
 
     <div class="container">
         <table class="table table-bordered">
@@ -43,7 +42,10 @@
                         <button wire:click="bulkDelete" class="btn btn-danger btn-sm m-0" @if (!$bulkDlt) disabled @endif>Delete {{ count($bulkDlt) }}</button>
                         {{-- <input type="checkbox" id="toggleButton" onclick="myFunction('{{ $collection }}')"> --}}
                         <input type="checkbox" wire:model="selectAll">
-                        <input type="hidden" wire:model="firstId" value="{{$collection[0]->id}}">
+                        {{-- @if (!is_null($collection) && count($collection) > 0)
+    <input type="hidden" wire:model="firstId" value="{{ $collection[0]->id }}">
+@endif --}}
+{{-- <input type="hidden" wire:model="firstId" value="{{$collection[0]->id}}"> --}}
                     </th>
                     <th>Name</th>
                     <th>File</th>
