@@ -13,14 +13,14 @@ class File extends Component
 {
     use WithFileUploads;
     use WithPagination;
-
+    public $selectedIds = [];
     public $name, $validatedData, $file, $fileName;
     public $uid, $uname, $ufile, $term = null, $file_id;
-    public $bulkDlt = [];
-    public $selectAll;
+    public $bulkDlt = [], $selectAll = false, $firstId = NULL;
+    protected $listeners = ['resetbulkDlt'=>'resetSelected'];
     public $data, $pngFileCount, $pdfFileCount, $docxFileCount, $xlsxFileCount, $pptxFileCount;
     protected $paginationTheme = 'bootstrap';
-
+ 
     public function mount()
     {
         $this->data = Files::all();
@@ -50,12 +50,37 @@ class File extends Component
     public function render()
     {
         $searchTerm = '%' . $this->term . '%';
-        $collection = Files::where('name', 'LIKE', $searchTerm)->orwhere('id', 'LIKE', $searchTerm)->latest()->paginate(7);
+        $collection = Files::where('name', 'LIKE', $searchTerm)->orwhere('id', 'LIKE', $searchTerm)->paginate(5); // ->latest()
+        $this->firstId = $collection[0]->id;
         return view('livewire.file', [
             'collection' => $collection,
             'pagination' => $collection->toArray(),
         ]);
         $this->mount();
+    }
+    public function updatedSelectAll($value){
+        if($value){
+            $this->bulkDlt = Files::where('id', '>=', $this->firstId)->limit(5)->pluck('id');
+        }else{
+            $this->bulkDlt = [];
+        }
+    }
+    public function updatedbulkDlt($value)
+    {
+        if(count($value) == 5){
+            $this->selectAll = true;
+        }else{
+            $this->selectAll = false;
+        }
+    }
+    public function resetSelected()
+    {
+        $this->bulkDlt = [];
+        $this->selectAll = false;
+    }
+    public function selectAll($ids){
+        $this->selectedIds = explode(',', $ids);
+        dd($ids);
     }
     public function updated($field)
     {
@@ -98,23 +123,24 @@ class File extends Component
         $this->render();
         $this->mount();
     }
-    public function delete()
-    {
-        $data = Files::find($this->bulkDlt);        // bulkDlt is an array which have stored the ids
-        foreach ($data as  $value) {
-            if (!is_null($data)) {
-                $filePath = public_path('uploads/file_uploads') . '/' . $value->file;
-                Filo::delete($filePath) && $value->delete();
-            }
-        }
-        $this->dispatchBrowserEvent('showModalDlt');
-        $this->bulkDlt = [];
-        $this->resetData();
-        $this->render();
-        $this->mount();
+    // public function delete()
+    // {
+    //     $data = Files::find($this->bulkDlt);        // bulkDlt is an array which have stored the ids
+    //     foreach ($data as  $value) {
+    //         if (!is_null($data)) {
+    //             $filePath = public_path('uploads/file_uploads') . '/' . $value->file;
+    //             Filo::delete($filePath) && $value->delete();
 
-    }
-    public function allDelete()
+    //         }
+    //     }
+    //     $this->dispatchBrowserEvent('showModalDlt');
+    //     $this->bulkDlt = [];
+    //     $this->resetData();
+    //     $this->render();
+    //     $this->mount();
+
+    // }
+    public function bulkDelete()
     {
         $data = Files::find($this->bulkDlt);        // bulkDlt is an array which have stored the ids
         foreach ($data as  $value) {
@@ -122,10 +148,12 @@ class File extends Component
                 $filePath = public_path('uploads/file_uploads') . '/' . $value->file;
                 Filo::delete($filePath) && $value->delete();
             }
+            $value->delete();
         }
         $this->dispatchBrowserEvent('showModalDlt');
         $this->bulkDlt = [];
         $this->resetData();
+        $this->resetSelected();
         $this->render();
         $this->mount();
 
@@ -189,10 +217,5 @@ class File extends Component
     public function downloads($id){
         $data = Files::find($id);
         return response()->download(public_path('uploads/file_uploads'). '/' . $data->file);
-    }
-    public function toggleSelectAll()
-    {
-        $this->selectAll = !$this->selectAll;
-        $this->bulkDlt = array_fill(0, count($this->bulkDlt), $this->selectAll);
     }
 }

@@ -1,6 +1,4 @@
 <div>
-    @livewireStyles
-
     {{-- Top/Header (Button, search bar, icons) --}}
     <div class="container">
         <div class="d-flex justify-content-between align-items-center mt-4 mb-2">
@@ -31,15 +29,21 @@
         </div>
         
     </div>
+   
+    @dump($firstId)
+    {{-- @dump($selectAll)
+    @dump($bulkDlt) --}}
+
     <div class="container">
-        {{ $selectAll }}
         <table class="table table-bordered">
             <thead class="text-center">
                 <tr>
                     <th>ID</th>
                     <th style="width: 90px">
-                        <button wire:click="delete" class="btn btn-danger btn-sm m-0" @if (!$bulkDlt) disabled @endif>Delete {{ count($bulkDlt) }}</button>
-                        <input type="checkbox" wire:model.toggle="selectAll">
+                        <button wire:click="bulkDelete" class="btn btn-danger btn-sm m-0" @if (!$bulkDlt) disabled @endif>Delete {{ count($bulkDlt) }}</button>
+                        {{-- <input type="checkbox" id="toggleButton" onclick="myFunction('{{ $collection }}')"> --}}
+                        <input type="checkbox" wire:model="selectAll">
+                        <input type="hidden" wire:model="firstId" value="{{$collection[0]->id}}">
                     </th>
                     <th>Name</th>
                     <th>File</th>
@@ -50,7 +54,8 @@
                 @foreach ($collection as $item)
                     <tr>
                         <td class="text-center">{{ $item->id }}</td>
-                        <td><input type="checkbox" value="{{ $item->id }}" @if ($selectAll) checked @endif wire:model="bulkDlt"></td>
+                        <td><input type="checkbox" class="checkbox" value="{{ $item->id }}" wire:model="bulkDlt">
+                        </td>
                         <td>{{ $item->name }}</td>
                         <td>
                             <div class="d-flex justify-content-center"
@@ -90,11 +95,19 @@
         <div class="row">
             <div class="col-sm">
                 {!! $collection->links() !!}
+                @push('js')
+                <script src="https://code.jquery.com/jquery-3.7.0.slim.js" integrity="sha256-7GO+jepT9gJe9LB4XFf8snVOjX3iYNb0FHYr5LI1N5c=" crossorigin="anonymous">
+                </script>
+                <script>
+                    $(".page-item").on('click', function(event){
+                        Livewire.emit('resetbulkDlt');
+                    })
+                </script>
+        @endpush
             </div>
             <div class="col-sm-3">
                 Showing {{ $pagination['from'] }} to {{ $pagination['to'] }} of {{ $pagination['total'] }} users
             </div>
-            
         </div>
     </div>
 
@@ -194,5 +207,18 @@
     </div>
     @livewireScripts
 </div>
+
 <script src="{{ asset('js/custom_scripts.js') }}"></script>
 </div>
+<script>
+    $(document).ready(function() {
+        $("#toggleButton").click(function() {
+            $(".checkbox").each(function() {
+                $(this).prop("checked", !$(this).prop("checked"));
+            });
+        });
+    });
+    function myFunction($id){
+        alert($id);
+    }
+    </script>
