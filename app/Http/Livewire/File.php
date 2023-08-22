@@ -53,7 +53,7 @@ class File extends Component
     public function render()
     {
         $searchTerm = '%' . $this->term . '%';
-        $collection = Files::where('name', 'LIKE', $searchTerm)->orderBy('id', 'desc')->orwhere('id', 'LIKE', $searchTerm)->paginate(5); 
+        $collection = Files::where('name', 'LIKE', $searchTerm)->orderBy('id', 'desc')->orwhere('id', 'LIKE', $searchTerm)->paginate(7); 
         if(!empty($collection[0]->id)){
             $this->firstId = $collection[0]->id;
         }
@@ -65,14 +65,14 @@ class File extends Component
     }
     public function updatedSelectAll($value){
         if($value){
-            $this->bulkDlt = Files::where('id', '<=', $this->firstId)->orderBy('id', 'desc')->limit(5)->pluck('id');
+            $this->bulkDlt = Files::where('id', '<=', $this->firstId)->orderBy('id', 'desc')->limit(7)->pluck('id');
         }else{
             $this->bulkDlt = [];
         }
     }
     public function updatedbulkDlt($value)
     {
-        if(count($value) == 5){
+        if(count($value) == 7){
             $this->selectAll = true;
         }else{
             $this->selectAll = false;
@@ -112,7 +112,7 @@ class File extends Component
     {
         $this->validate([
             'name' => 'required',
-            'file' => 'required|file|mimes:png,jpg,xls,xlsx,doc,ppt,pptx,pdf|max:1024',
+            'file' => 'required|file|mimes:png,jpg,xls,xlsx,doc,docx,ppt,pptx,pdf|max:1024',
         ]);
 
         $file = new Files;

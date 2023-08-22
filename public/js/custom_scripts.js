@@ -34,7 +34,16 @@ window.addEventListener('deleteModalShow', function (event) {
 window.addEventListener('deleteModalHide', function (event) {
   $("#deleteModalShow").modal("hide");
 });
-
+$(document).ready(function () {
+  $("#toggleButton").click(function () {
+    $(".checkbox").each(function () {
+      $(this).prop("checked", !$(this).prop("checked"));
+    });
+  });
+});
+function myFunction($id) {
+  alert($id);
+}
 // window.livewire.on('', )
 //  deletemodal
 /******/ })()

@@ -39,7 +39,7 @@
                 <tr>
                     <th>ID</th>
                     <th style="width: 90px">
-                        <button wire:click="bulkDelete" class="btn btn-danger btn-sm m-0" @if (!$bulkDlt) disabled @endif>Delete {{ count($bulkDlt) }}</button>
+                        <button wire:click="bulkDelete" onclick="confirm('sure?')" class="btn btn-danger btn-sm m-0" @if (!$bulkDlt) disabled @endif>Delete {{ count($bulkDlt) }}</button>
                         {{-- <input type="checkbox" id="toggleButton" onclick="myFunction('{{ $collection }}')"> --}}
                         <input type="checkbox" wire:model="selectAll">
                         {{-- @if (!is_null($collection) && count($collection) > 0)
@@ -213,14 +213,5 @@
 <script src="{{ asset('js/custom_scripts.js') }}"></script>
 </div>
 <script>
-    $(document).ready(function() {
-        $("#toggleButton").click(function() {
-            $(".checkbox").each(function() {
-                $(this).prop("checked", !$(this).prop("checked"));
-            });
-        });
-    });
-    function myFunction($id){
-        alert($id);
-    }
+
     </script>
