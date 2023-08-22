@@ -34,6 +34,12 @@ window.addEventListener('deleteModalShow', function (event) {
 window.addEventListener('deleteModalHide', function (event) {
   $("#deleteModalShow").modal("hide");
 });
+window.addEventListener('deleteBulkModalShow', function (event) {
+  $("#deleteBulkModalShow").modal("show");
+});
+window.addEventListener('deleteBulkModalHide', function (event) {
+  $("#deleteBulkModalShow").modal("hide");
+});
 $(document).ready(function () {
   $("#toggleButton").click(function () {
     $(".checkbox").each(function () {

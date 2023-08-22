@@ -26,6 +26,14 @@ window.addEventListener('deleteModalShow', event =>{
 window.addEventListener('deleteModalHide', event =>{
     $("#deleteModalShow").modal("hide")
 })
+
+window.addEventListener('deleteBulkModalShow', event =>{
+    $("#deleteBulkModalShow").modal("show");
+    })
+window.addEventListener('deleteBulkModalHide', event =>{
+    $("#deleteBulkModalShow").modal("hide")
+})
+
 $(document).ready(function() {
     $("#toggleButton").click(function() {
         $(".checkbox").each(function() {

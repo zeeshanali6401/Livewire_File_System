@@ -1,5 +1,4 @@
 <div>
-    {{-- Top/Header (Button, search bar, icons) --}}
     <div class="container">
         <div class="d-flex justify-content-between align-items-center mt-4 mb-2">
             <div class="d-flex">
@@ -29,23 +28,15 @@
         </div>
         
     </div>
-    {{-- @dump($firstId) --}}
-        {{-- @dump($selectAll)
-        @dump($bulkDlt) --}}
 
     <div class="container">
         <table class="table table-bordered">
             <thead class="text-center">
                 <tr>
-                    <th>ID</th>
-                    <th style="width: 90px">
-                        <button wire:click="bulkDelete" onclick="confirm('sure?')" class="btn btn-danger btn-sm m-0" @if (!$bulkDlt) disabled @endif>Delete {{ count($bulkDlt) }}</button>
-                        {{-- <input type="checkbox" id="toggleButton" onclick="myFunction('{{ $collection }}')"> --}}
-                        <input type="checkbox" wire:model="selectAll">
-                        {{-- @if (!is_null($collection) && count($collection) > 0)
-    <input type="hidden" wire:model="firstId" value="{{ $collection[0]->id }}">
-@endif --}}
-{{-- <input type="hidden" wire:model="firstId" value="{{$collection[0]->id}}"> --}}
+                    <th style="width: 60px">ID</th>
+                    <th style="width: 120px">
+                        <button wire:click="deleteBulkModalShow" class="btn btn-danger btn-sm m-0" @if (!$bulkDlt) disabled @endif>Delete {{ count($bulkDlt) }}</button>
+                        <button class="btn btn-light btn-sm p-1 mt-1"><span>Select All <input type="checkbox" wire:model="selectAll"></span></button>
                     </th>
                     <th>Name</th>
                     <th>File</th>
@@ -167,6 +158,21 @@
                 <div class="modal-body text-center">
                     <button type="button" wire:click="deleteSingle" class="btn btn-danger">Yes</button>
                     <button type="button" class="btn btn-secondary" wire:click="deleteModalHide">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {{-- Delete Bulk Modal Confirmation --}}
+    <div wire:ignore.self class="modal fade" id="deleteBulkModalShow">
+        <div style="width: 250px" class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header text-danger">
+                    <h5 class="modal-title text-center" id="deleteBulkModalShowLongTitle">Are you sure to delete selected items...?</h5>
+                </div>
+                <div class="modal-body text-center">
+                    <button type="button" wire:click="bulkDelete" class="btn btn-danger">Yes</button>
+                    <button type="button" class="btn btn-secondary" wire:click="deleteBulkModalHide">Close</button>
                 </div>
             </div>
         </div>

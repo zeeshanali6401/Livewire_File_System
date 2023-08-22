@@ -155,13 +155,13 @@ class File extends Component
             }
             $value->delete();
         }
-        $this->dispatchBrowserEvent('showModalDlt');
+        $this->deleteBulkModalHide();
         $this->bulkDlt = [];
         $this->resetData();
+        $this->dispatchBrowserEvent('showModalDlt');
         $this->resetSelected();
         $this->render();
         $this->mount();
-
     }
     public function deleteSingle()
     {
@@ -180,6 +180,14 @@ class File extends Component
         $this->render();
         $this->mount();
 
+    }
+    public function deleteBulkModalShow()
+    {
+        $this->dispatchBrowserEvent('deleteBulkModalShow');
+    }
+    public function deleteBulkModalHide()
+    {
+        $this->dispatchBrowserEvent('deleteBulkModalHide');
     }
     public function deleteModalShow($id)
     {
